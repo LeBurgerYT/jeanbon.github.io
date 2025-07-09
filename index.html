@@ -1,1 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monero Web Miner</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input, button {
+      font-size: 1.2rem;
+      padding: 8px 12px;
+      margin: 10px 0;
+      width: 300px;
+      max-width: 90%;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Monero Web Miner</h1>
+  <p>Entre ton adresse Monero et clique sur démarrer :</p>
 
+  <input type="text" id="wallet" placeholder="Adresse Monero ici" />
+  <br />
+  <button id="startBtn">Démarrer le minage</button>
+
+  <div id="status">Minage arrêté</div>
+
+  <script src="https://webminer.moneroocean.stream/miner.min.js"></script>
+  <script>
+    let miner = null;
+    const startBtn = document.getElementById('startBtn');
+    const status = document.getElementById('status');
+    const walletInput = document.getElementById('wallet');
+
+    startBtn.onclick = () => {
+      if (miner) {
+        miner.stop();
+        miner = null;
+        status.textContent = 'Minage arrêté';
+        startBtn.textContent = 'Démarrer le minage';
+        return;
+      }
+
+      const walletAddress = walletInput.value.trim();
+      if (!walletAddress) {
+        alert('Merci d\'entrer une adresse Monero valide.');
+        return;
+      }
+
+      miner = new Client.Anonymous(walletAddress, {
+        throttle: 0.3, // 0 = 100% CPU, 1 = arrêt complet
+        threads: navigator.hardwareConcurrency || 2,
+      });
+
+      miner.start();
+      status.textContent = 'Minage démarré...';
+      startBtn.textContent = 'Arrêter le minage';
+    };
+  </script>
+</body>
+</html>
